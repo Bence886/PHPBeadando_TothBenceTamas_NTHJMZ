@@ -1,0 +1,16 @@
+{# templates/tree/footer.html.twig #}
+</div>
+<footer class="bg-dark">
+    <div class="container h-100">
+        <div class="d-flex align-items-center justify-content-center h-100">
+            <span class="text-light text-center align-bottom"/>Copyright 2018-<span id="year"></span>
+        </div>
+    </div>
+</footer>
+<script>
+    var d = new Date();
+    var y = d.getFullYear();
+    document.getElementById("year").innerHTML = y;
+</script>
+</body>
+</html>

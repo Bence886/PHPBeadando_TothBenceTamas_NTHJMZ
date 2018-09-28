@@ -1,0 +1,10 @@
+{# templates/tree/index.html.twig #}
+{% extends 'base.html.twig' %}
+{% block title %}
+Tree
+{% endblock %}
+{% block body %}
+{% include 'tree/header.html.twig' %}
+    {% block treeContent %}{% endblock %}
+{% include 'tree/footer.html.twig' %}
+{% endblock %}

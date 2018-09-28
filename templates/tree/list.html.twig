@@ -1,0 +1,38 @@
+{# templates/tree/list.html.twig #}
+{% extends 'tree/index.html.twig' %}
+{% block treeContent %}
+    <div class="container">
+        {% include 'flashbag.html.twig' %}
+        <div class="card justify-content-center">
+            <h5 class="card-header bg-dark text-white">Tree list</h5>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover ">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Height</th>
+                            <th>Home</th>
+                            <th>Price</th>
+                            <th>Age</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for tree in trees %}
+                                <tr>
+                                    <td>{{ tree.id }}</td>
+                                    <td>{{ tree.name }}</td>
+                                    <td>{{ tree.height }}</td>
+                                    <td>{{ tree.home }}</td>
+                                    <td>{{ tree.price }}</td>
+                                    <td>{{ tree.age }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

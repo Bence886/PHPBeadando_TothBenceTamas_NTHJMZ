@@ -1,0 +1,8 @@
+{# templates/flsahbag.html.twig #}
+{% set notices = app.session.flashbag.get('notice') %}
+{% for msg in notices %}
+    <p style="font-size: 16px; color: red; font-weight: bold">{{ msg }}</p>
+{% endfor %}
+{% if notices is not empty %}
+    <hr />
+{% endif %}
