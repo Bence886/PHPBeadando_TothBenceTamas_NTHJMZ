@@ -1,8 +1,9 @@
 {# templates/tree/list.html.twig #}
 {% extends 'tree/index.html.twig' %}
 {% block treeContent %}
+    {% include 'flashbag.html.twig' %}
+    <br/>
     <div class="container">
-        {% include 'flashbag.html.twig' %}
         <div class="card justify-content-center">
             <h5 class="card-header bg-dark text-white">Tree list</h5>
             <div class="card-body">
@@ -19,20 +20,21 @@
                         </tr>
                         </thead>
                         <tbody>
-                            {% for tree in trees %}
-                                <tr>
-                                    <td>{{ tree.id }}</td>
-                                    <td>{{ tree.name }}</td>
-                                    <td>{{ tree.height }}</td>
-                                    <td>{{ tree.home }}</td>
-                                    <td>{{ tree.price }}</td>
-                                    <td>{{ tree.age }}</td>
-                                </tr>
-                            {% endfor %}
+                        {% for tree in trees %}
+                            <tr>
+                                <td>{{ tree.id }}</td>
+                                <td>{{ tree.name }}</td>
+                                <td>{{ tree.height }}</td>
+                                <td>{{ tree.home }}</td>
+                                <td>{{ tree.price }}</td>
+                                <td>{{ tree.age }}</td>
+                            </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+    {% include 'tree/questions.html.twig' %}
 {% endblock %}
