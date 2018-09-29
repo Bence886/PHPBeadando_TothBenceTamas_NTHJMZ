@@ -29,6 +29,7 @@ class TreeController extends Controller
     private $q4 = "How much is the total cost of our trees?";
 
     private $trees;
+    private $randomTrees;
 
     private function loadTrees()
     {
@@ -78,6 +79,12 @@ class TreeController extends Controller
         $twigParams["questions"][] = array("question" => $this->q2, "answer" => $this->Q2());
         $twigParams["questions"][] = array("question" => $this->q3, "answer" => $this->Q3());
         $twigParams["questions"][] = array("question" => $this->q4, "answer" => $this->Q4());
+
+        $this->randomizeEntries(20);
+        foreach ($this->randomTrees as $tree)
+        {
+            $twigParams["randomtrees"][]=$tree;
+        }
 
         return $this->render('tree/list.html.twig', $twigParams);
     }
@@ -139,5 +146,20 @@ class TreeController extends Controller
             $sum = $sum + $tree["price"];
         }
         return $sum;
+    }
+
+    private function randomizeEntries(int $num)
+    {
+        $tree = array("id" => "", "name" => "", "height" => "", "home" => "", "price" => "", "age" => "");
+        for ($i = 0; $i < $num; $i++)
+        {
+            $tree["id"] = $i;
+            $tree["name"] = array_rand($this->trees)["name"];
+            $tree["height"] = rand(0, 30);
+            $tree["home"] = array_rand($this->trees)["home"];
+            $tree["price"] = rand(0, 20000);
+            $tree["age"] = rand(1, 20);
+            $this->randomTrees[] = $tree;
+        }
     }
 }
