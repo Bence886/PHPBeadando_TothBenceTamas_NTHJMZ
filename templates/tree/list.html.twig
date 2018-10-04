@@ -2,11 +2,23 @@
 {% extends 'tree/index.html.twig' %}
 {% block treeContent %}
     {% include 'flashbag.html.twig' %}
-    {% include 'tree/treelist.html.twig' with {'listtrees' : trees}%}
+    {% include 'tree/treelist.html.twig' with {'listtrees' : trees} %}
     <br/>
-    {% include 'tree/questions.html.twig' with {'questions' : ezquestions}%}
+    {% include 'tree/questions.html.twig' with {'questions' : ezquestions} %}
     <br/>
     {% include 'tree/treelist.html.twig' with {'listtrees' : randomtrees} %}
     <br/>
     {% include 'tree/questions.html.twig' with {'questions' : qquestions} %}
+    <br/>
+    {% if union is defined %}
+        {% include 'tree/treelist.html.twig' with {'listtrees' : union} %}
+        <br/>
+    {% endif %}
+    {% if intersect is defined %}
+        {% include 'tree/treelist.html.twig' with {'listtrees' : intersect} %}
+        <br/>
+    {% endif %}
+    {% if difference is defined %}
+        {% include 'tree/treelist.html.twig' with {'listtrees' : difference} %}
+    {% endif %}
 {% endblock %}

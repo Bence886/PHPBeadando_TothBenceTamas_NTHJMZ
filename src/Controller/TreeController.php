@@ -30,10 +30,13 @@ class TreeController extends Controller
 
     private $qq0 = "Union of the two lists.";
     private $qq1 = "Intersection of the two lists.";
-    private $qq2 = "";
+    private $qq2 = "Difference (trees - randomtrees).";
 
     private $trees;
     private $randomTrees;
+    private $union;
+    private $intersect;
+    private $difference;
 
     private function loadTrees()
     {
@@ -60,9 +63,9 @@ class TreeController extends Controller
         if ($tree["age"]) $this->trees[] = $tree;
     }
 
-    private function treeToString(array $tree) : string
+    private function treeToString(array $tree): string
     {
-        return "id: ".$tree["id"].", name: ".$tree["name"].", height: ".$tree["height"].", home: ".$tree["home"].", price: ".$tree["price"].", age: ".$tree["age"];
+        return "id: " . $tree["id"] . ", name: " . $tree["name"] . ", height: " . $tree["height"] . ", home: " . $tree["home"] . ", price: " . $tree["price"] . ", age: " . $tree["age"];
     }
 
     /**
@@ -73,9 +76,8 @@ class TreeController extends Controller
     public function treeListAction(Request $request): Response
     {
         $this->loadTrees();
-        foreach ($this->trees as $tree)
-        {
-            $twigParams["trees"][]=$tree;
+        foreach ($this->trees as $tree) {
+            $twigParams["trees"][] = $tree;
         }
 
         $twigParams["ezquestions"][] = array("question" => $this->q0, "answer" => $this->Q0($this->trees));
@@ -85,14 +87,23 @@ class TreeController extends Controller
         $twigParams["ezquestions"][] = array("question" => $this->q4, "answer" => $this->Q4($this->trees));
 
         $this->randomizeEntries(20);
-        foreach ($this->randomTrees as $tree)
-        {
-            $twigParams["randomtrees"][]=$tree;
+        foreach ($this->randomTrees as $tree) {
+            $twigParams["randomtrees"][] = $tree;
         }
 
         $twigParams["qquestions"][] = array("question" => $this->qq0, "answer" => $this->QQ0());
         $twigParams["qquestions"][] = array("question" => $this->qq1, "answer" => $this->QQ1());
         $twigParams["qquestions"][] = array("question" => $this->qq2, "answer" => $this->QQ2());
+
+        foreach ($this->union as $tree) {
+            $twigParams["union"][] = $tree;
+        }
+        foreach ($this->intersect as $tree) {
+            $twigParams["intersect"][] = $tree;
+        }
+        foreach ($this->difference as $tree) {
+            $twigParams["difference"][] = $tree;
+        }
 
         return $this->render('tree/list.html.twig', $twigParams);
     }
@@ -100,10 +111,8 @@ class TreeController extends Controller
     private function Q0(array $trees): string
     {//highest
         $highest = 0;
-        for ($i = 1; $i < count($trees); $i++)
-        {
-            if ($trees[$i]["height"] > $trees[$highest]["height"])
-            {
+        for ($i = 1; $i < count($trees); $i++) {
+            if ($trees[$i]["height"] > $trees[$highest]["height"]) {
                 $oldest = $i;
             }
         }
@@ -113,10 +122,8 @@ class TreeController extends Controller
     private function Q1(array $trees): string
     {//oldest
         $oldest = 0;
-        for ($i = 1; $i < count($trees); $i++)
-        {
-            if ($trees[$i]["age"] > $trees[$oldest]["age"])
-            {
+        for ($i = 1; $i < count($trees); $i++) {
+            if ($trees[$i]["age"] > $trees[$oldest]["age"]) {
                 $oldest = $i;
             }
         }
@@ -127,8 +134,7 @@ class TreeController extends Controller
     {//2yo
         $num = 0;
         foreach ($trees as $tree) {
-            if ($tree["age"] == 2)
-            {
+            if ($tree["age"] == 2) {
                 $num++;
             }
         }
@@ -139,8 +145,7 @@ class TreeController extends Controller
     {//pine
         $num = 0;
         foreach ($trees as $tree) {
-            if ($tree["name"]== "Pine")
-            {
+            if ($tree["name"] == "Pine") {
                 $num++;
             }
         }
@@ -159,8 +164,7 @@ class TreeController extends Controller
     private function randomizeEntries(int $num)
     {
         $tree = array("id" => "", "name" => "", "height" => "", "home" => "", "price" => "", "age" => "");
-        for ($i = 0; $i < $num; $i++)
-        {
+        for ($i = 0; $i < $num; $i++) {
             $tree["id"] = $i;
             $tree["name"] = $this->trees[array_rand($this->trees)]["name"];
             $tree["height"] = rand(0, 30);
@@ -171,16 +175,79 @@ class TreeController extends Controller
         }
     }
 
-    private function QQ0() : string
+    private function compareTrees(array $tree0, array $tree1): bool
     {
-        return "a";
+        return $tree0["name"] == $tree1["name"] &&
+            $tree0["height"] == $tree1["height"] &&
+            $tree0["home"] == $tree1["home"] &&
+            $tree0["price"] == $tree1["price"] &&
+            $tree0["age"] == $tree1["age"];
     }
-    private function QQ1() : string
+
+    private function QQ0(): string
     {
-        return $this->Q1(array_merge($this->trees, $this->randomTrees));
+        $union[] = $this->trees[0];
+        foreach ($this->trees as $treeitem) {
+            $putin = false;
+            foreach ($union as $unioitem) {
+                if (!$this->compareTrees($treeitem, $unioitem)) {
+                    $putin = true;
+                }
+            }
+            if ($putin) {
+                $union[] = $treeitem;
+            }
+        }
+        foreach ($this->randomTrees as $treeitem) {
+            $putin = false;
+            foreach ($union as $unioitem) {
+                if (!$this->compareTrees($treeitem, $unioitem)) {
+                    $putin = true;
+                }
+            }
+            if ($putin) {
+                $union[] = $treeitem;
+            }
+        }
+        $this->union = $union;
+        return count($union);
     }
-    private function QQ2() : string
+
+
+    private function QQ1(): string
     {
-        return "harom";
+        $intersect = array();
+        foreach ($this->trees as $treeitem) {
+            $putin = false;
+            foreach ($this->randomTrees as $randomitem) {
+                if ($this->compareTrees($treeitem, $randomitem)) {
+                    $putin = true;
+                }
+            }
+            if ($putin) {
+                $intersect[] = $treeitem;
+            }
+        }
+        $this->intersect = $intersect;
+        return count($intersect);
+    }
+
+    private function QQ2(): string
+    {
+        $diff = array();
+
+        foreach ($this->trees as $treeitem) {
+            $putin = true;
+            foreach ($this->randomTrees as $randomitem) {
+                if ($this->compareTrees($treeitem, $randomitem)) {
+                    $putin = false;
+                }
+            }
+            if ($putin) {
+                $diff[] = $treeitem;
+            }
+        }
+        $this->difference = $diff;
+        return count($diff);
     }
 }
