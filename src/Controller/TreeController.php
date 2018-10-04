@@ -28,6 +28,10 @@ class TreeController extends Controller
     private $q3 = "How much Pine trees do we have?";
     private $q4 = "How much is the total cost of our trees?";
 
+    private $qq0 = "Union of the two lists.";
+    private $qq1 = "Intersection of the two lists.";
+    private $qq2 = "";
+
     private $trees;
     private $randomTrees;
 
@@ -74,11 +78,11 @@ class TreeController extends Controller
             $twigParams["trees"][]=$tree;
         }
 
-        $twigParams["questions"][] = array("question" => $this->q0, "answer" => $this->Q0());
-        $twigParams["questions"][] = array("question" => $this->q1, "answer" => $this->Q1());
-        $twigParams["questions"][] = array("question" => $this->q2, "answer" => $this->Q2());
-        $twigParams["questions"][] = array("question" => $this->q3, "answer" => $this->Q3());
-        $twigParams["questions"][] = array("question" => $this->q4, "answer" => $this->Q4());
+        $twigParams["ezquestions"][] = array("question" => $this->q0, "answer" => $this->Q0($this->trees));
+        $twigParams["ezquestions"][] = array("question" => $this->q1, "answer" => $this->Q1($this->trees));
+        $twigParams["ezquestions"][] = array("question" => $this->q2, "answer" => $this->Q2($this->trees));
+        $twigParams["ezquestions"][] = array("question" => $this->q3, "answer" => $this->Q3($this->trees));
+        $twigParams["ezquestions"][] = array("question" => $this->q4, "answer" => $this->Q4($this->trees));
 
         $this->randomizeEntries(20);
         foreach ($this->randomTrees as $tree)
@@ -86,39 +90,43 @@ class TreeController extends Controller
             $twigParams["randomtrees"][]=$tree;
         }
 
+        $twigParams["qquestions"][] = array("question" => $this->qq0, "answer" => $this->QQ0());
+        $twigParams["qquestions"][] = array("question" => $this->qq1, "answer" => $this->QQ1());
+        $twigParams["qquestions"][] = array("question" => $this->qq2, "answer" => $this->QQ2());
+
         return $this->render('tree/list.html.twig', $twigParams);
     }
 
-    private function Q0(): string
+    private function Q0(array $trees): string
     {//highest
         $highest = 0;
-        for ($i = 1; $i < count($this->trees); $i++)
+        for ($i = 1; $i < count($trees); $i++)
         {
-            if ($this->trees[$i]["height"] > $this->trees[$highest]["height"])
+            if ($trees[$i]["height"] > $trees[$highest]["height"])
             {
                 $oldest = $i;
             }
         }
-        return $this->treeToString($this->trees[$highest]);
+        return $this->treeToString($trees[$highest]);
     }
 
-    private function Q1(): string
+    private function Q1(array $trees): string
     {//oldest
         $oldest = 0;
-        for ($i = 1; $i < count($this->trees); $i++)
+        for ($i = 1; $i < count($trees); $i++)
         {
-            if ($this->trees[$i]["age"] > $this->trees[$oldest]["age"])
+            if ($trees[$i]["age"] > $trees[$oldest]["age"])
             {
                 $oldest = $i;
             }
         }
-        return $this->treeToString($this->trees[$oldest]);
+        return $this->treeToString($trees[$oldest]);
     }
 
-    private function Q2(): string
+    private function Q2(array $trees): string
     {//2yo
         $num = 0;
-        foreach ($this->trees as $tree) {
+        foreach ($trees as $tree) {
             if ($tree["age"] == 2)
             {
                 $num++;
@@ -127,10 +135,10 @@ class TreeController extends Controller
         return $num;
     }
 
-    private function Q3(): string
+    private function Q3(array $trees): string
     {//pine
         $num = 0;
-        foreach ($this->trees as $tree) {
+        foreach ($trees as $tree) {
             if ($tree["name"]== "Pine")
             {
                 $num++;
@@ -139,10 +147,10 @@ class TreeController extends Controller
         return $num;
     }
 
-    private function Q4(): string
+    private function Q4(array $trees): string
     {//totalcost
         $sum = 0;
-        foreach ($this->trees as $tree) {
+        foreach ($trees as $tree) {
             $sum = $sum + $tree["price"];
         }
         return $sum;
@@ -154,12 +162,25 @@ class TreeController extends Controller
         for ($i = 0; $i < $num; $i++)
         {
             $tree["id"] = $i;
-            $tree["name"] = array_rand($this->trees)["name"];
+            $tree["name"] = $this->trees[array_rand($this->trees)]["name"];
             $tree["height"] = rand(0, 30);
-            $tree["home"] = array_rand($this->trees)["home"];
+            $tree["home"] = $this->trees[array_rand($this->trees)]["home"];
             $tree["price"] = rand(0, 20000);
             $tree["age"] = rand(1, 20);
             $this->randomTrees[] = $tree;
         }
+    }
+
+    private function QQ0() : string
+    {
+        return "a";
+    }
+    private function QQ1() : string
+    {
+        return $this->Q1(array_merge($this->trees, $this->randomTrees));
+    }
+    private function QQ2() : string
+    {
+        return "harom";
     }
 }

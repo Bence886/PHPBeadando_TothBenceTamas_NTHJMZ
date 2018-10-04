@@ -3,6 +3,10 @@
 {% block treeContent %}
     {% include 'flashbag.html.twig' %}
     {% include 'tree/treelist.html.twig' with {'listtrees' : trees}%}
-    {% include 'tree/questions.html.twig' %}
+    <br/>
+    {% include 'tree/questions.html.twig' with {'questions' : ezquestions}%}
+    <br/>
     {% include 'tree/treelist.html.twig' with {'listtrees' : randomtrees} %}
+    <br/>
+    {% include 'tree/questions.html.twig' with {'questions' : qquestions} %}
 {% endblock %}
